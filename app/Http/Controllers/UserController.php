@@ -61,7 +61,7 @@ class UserController extends Controller
 
     // **UPLOAD AVATAR
     public function uploadAvatar(Request $request) {
-
+       
         if($request->hasFile('avatar')) {
 
             $this->deleteOldAvatar();
@@ -70,8 +70,10 @@ class UserController extends Controller
             $request->avatar->storeAs('images', $filename, 'public');
             auth()->user()->update(['avatar' => $filename]);
 
-            return redirect()->back();
+            return redirect('home')->with('success', 'Avatar updated');
         }
+
+        return redirect('home')->with('error', 'Update failed');
         
     }
 

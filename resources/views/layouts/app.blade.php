@@ -60,7 +60,7 @@
 
                                 @if(Auth::user()->avatar)
                                 <img class="rounded-circle" src="{{asset('storage/images/'.Auth::user()->avatar)}}"
-                                    alt="avatar" width="40" height="40">
+                                    alt="avatar" width="20" height="20">
                                 @endif
                             </a>
 
