@@ -24,6 +24,14 @@ Route::get('/', function () {
 // Route::get("/create-user", "UserController@create");
 
 
+// ** TODO ROUTES
+Route::get("/todos", 'TodoController@index');
+Route::update('/todos/{id}', 'TodoController@update');
+Route::post('/todos', 'TodoController@insert');
+Route::delete('/todos/{id}', 'TodoController@delete');
+
+
+
 // **UPLOAD AVATAR
 Route::post("/upload-avatar", "UserController@uploadAvatar");
 

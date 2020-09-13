@@ -53,6 +53,7 @@
                         </li>
                         @endif
                         @else
+                        <li><a href="/todos" class="nav-link text-success font-weight-bold">Todos</a></li>
                         <li class="nav-item dropdown">
                             <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
