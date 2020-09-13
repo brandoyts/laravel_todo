@@ -20,11 +20,12 @@ Route::get('/', function () {
 
 
 // **USER CRUD
-Route::get("/users", "UserController@index");
-Route::get("/create-user", "UserController@create");
+// Route::get("/users", "UserController@index");
+// Route::get("/create-user", "UserController@create");
 
 
-
+// **UPLOAD AVATAR
+Route::post("/upload-avatar", "UserController@uploadAvatar");
 
 Auth::routes();
 

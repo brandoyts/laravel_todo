@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use App\User;
 
 class UserController extends Controller
@@ -33,7 +34,7 @@ class UserController extends Controller
         if($user) {
             return Response(
                 [
-                    "message"=> "user already exists",
+                    "message"=> "email already exists",
                     "status"=> 400,
                 ],
                 400
@@ -56,5 +57,29 @@ class UserController extends Controller
             ],
             201
         );
+    }
+
+    // **UPLOAD AVATAR
+    public function uploadAvatar(Request $request) {
+
+        if($request->hasFile('avatar')) {
+
+            $this->deleteOldAvatar();
+        
+            $filename = $request->avatar->getClientOriginalName();
+            $request->avatar->storeAs('images', $filename, 'public');
+            auth()->user()->update(['avatar' => $filename]);
+
+            return redirect()->back();
+        }
+        
+    }
+
+    protected function deleteOldAvatar() {
+        
+        // *DELETE OLD AVATAR FROM STORAGE IF EXISTS
+        if(auth()->user()->avatar) {
+            Storage::delete('/public/images/'.auth()->user()->avatar);
+        }
     }
 }
