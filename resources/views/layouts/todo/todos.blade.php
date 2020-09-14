@@ -28,7 +28,6 @@
         <table class="table table-lg table-hover overfllow-auto">
             <thead class="thead-dark">
                 <tr>
-                    <th scope="col">#</th>
                     <th scope="col">Title</th>
                     <th scope="col">Status</th>
                     <th scope="col">Actions</th>
@@ -37,19 +36,48 @@
             <tbody>
                 @foreach($todos as $key => $value)
                 <tr>
-                    <td scope="{{$key + 1}}">{{$key + 1}}</td>
                     <td>{{$value->title}}</td>
                     <td>{{$value->status}}</td>
                     <td>
-                        <a href="#" class="btn btn-warning">Edit</a>
-                        <a href="{{'/todos/'.$value->id}}" class="btn btn-danger" data-method="delete">Delete</a>
+                        <a href="{{route('todos.edit', $value->id)}}"><i class="fas fa-edit text-warning"></i></a>
+                        <i class="fas fa-trash-alt text-danger"></i>
                     </td>
+                    <form hidden id={{'form-delete-'.$key}} action="{{route('todos.delete', $key)}}" method="PUT">
+                        @csrf
+                        @method('DELETE')
+                        <input hidden type="text" name="id" value={{$value->id}}>
+                    </form>
                 </tr>
                 @endforeach
-                </tr>
             </tbody>
         </table>
     </div>
 </div>
+
+
+{{-- DOM MANIPULATION --}}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const rows = document.querySelector('tbody').children;
+       
+       for(let i = 0; i < rows.length; i++) {
+           
+           const deleteBtn = document.querySelector(`#delete-btn-${i}`);
+           const formDelete = document.querySelector(`#form-delete-${i}`);
+
+           deleteBtn.addEventListener("click", e => {
+               e.preventDefault();
+            //    console.log("object");
+
+              console.log(formDelete);
+              formDelete.submit();
+           });
+
+
+       }
+    });
+</script>
+
 
 @endsection

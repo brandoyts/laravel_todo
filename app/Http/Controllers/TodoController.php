@@ -45,7 +45,12 @@ class TodoController extends Controller
         return redirect()->back();
     }
 
+    public function edit($id) {
+       
+        dd($id);
+    }
+
     public function delete() {
-        dd("test");
+        return redirect()->back();
     }
 }
