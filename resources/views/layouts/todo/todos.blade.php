@@ -24,7 +24,6 @@
 
         @include('layouts.alert')
 
-
         <table class="table table-lg table-hover overfllow-auto">
             <thead class="thead-dark">
                 <tr>
@@ -40,12 +39,13 @@
                     <td>{{$value->status}}</td>
                     <td>
                         <a href="{{route('todos.edit', $value->id)}}"><i class="fas fa-edit text-warning"></i></a>
-                        <i class="fas fa-trash-alt text-danger"></i>
+                        <i class="btn fas fa-trash-alt text-danger" id="{{"delete-btn-".$key}}"></i>
                     </td>
-                    <form hidden id={{'form-delete-'.$key}} action="{{route('todos.delete', $key)}}" method="PUT">
+                    <form hidden id="{{"form-delete-".$key}}" action="{{route('todos.delete', $value->id)}}"
+                        method="POST">
                         @csrf
                         @method('DELETE')
-                        <input hidden type="text" name="id" value={{$value->id}}>
+                        <input hidden aria-hidden="true" type="text" name="id" value="{{$value->id}}">
                     </form>
                 </tr>
                 @endforeach
@@ -68,9 +68,9 @@
 
            deleteBtn.addEventListener("click", e => {
                e.preventDefault();
-            //    console.log("object");
+            
 
-              console.log(formDelete);
+              
               formDelete.submit();
            });
 

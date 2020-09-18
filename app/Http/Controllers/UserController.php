@@ -9,63 +9,67 @@ use Illuminate\Support\Facades\Storage;
 use App\User;
 
 class UserController extends Controller
-{   
-    // **FETCH ALL USERS
-    public function index() {
+{
+
+    public function index()
+    {
 
         $users = User::all();
-        
+
         return Response(
             [
-                "total"=> count($users), 
-                "users"=> $users,
-                "status"=> 200
-            ], 
-                200);
+                "total" => count($users),
+                "users" => $users,
+                "status" => 200
+            ],
+            200
+        );
     }
 
 
-    // **CREATE A USER
-    public function create() {
-        
+    public function create()
+    {
+
         // **check if user already exists
         $user = User::get()->where("email", "client2@mail.com");
-        
-        if($user) {
+
+        if ($user) {
             return Response(
                 [
-                    "message"=> "email already exists",
-                    "status"=> 400,
+                    "message" => "email already exists",
+                    "status" => 400,
                 ],
                 400
             );
-        } 
+        }
 
         $data = [
-            "name"=> "client2",
-            "email"=> "client2@mail.com",
-            "password"=> "client1234"
+            "name" => "client2",
+            "email" => "client2@mail.com",
+            "password" => "client1234"
         ];
 
         User::create($data);
-        
+
 
         return Response(
             [
-                "message"=> "user created succesfully",
-                "status"=> 201,
+                "message" => "user created succesfully",
+                "status" => 201,
             ],
             201
         );
     }
 
+
     // **UPLOAD AVATAR
-    public function uploadAvatar(Request $request) {
-       
-        if($request->hasFile('avatar')) {
+    public function uploadAvatar(Request $request)
+    {
+
+        if ($request->hasFile('avatar')) {
 
             $this->deleteOldAvatar();
-        
+
             $filename = $request->avatar->getClientOriginalName();
             $request->avatar->storeAs('images', $filename, 'public');
             auth()->user()->update(['avatar' => $filename]);
@@ -74,14 +78,15 @@ class UserController extends Controller
         }
 
         return redirect('home')->with('error', 'Update failed');
-        
     }
 
-    protected function deleteOldAvatar() {
-        
+
+    protected function deleteOldAvatar()
+    {
+
         // *DELETE OLD AVATAR FROM STORAGE IF EXISTS
-        if(auth()->user()->avatar) {
-            Storage::delete('/public/images/'.auth()->user()->avatar);
+        if (auth()->user()->avatar) {
+            Storage::delete('/public/images/' . auth()->user()->avatar);
         }
     }
 }
