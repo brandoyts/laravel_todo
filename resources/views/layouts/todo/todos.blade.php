@@ -34,19 +34,19 @@
             </thead>
             <tbody>
                 @foreach($todos as $key => $value)
-                <tr>
+                <tr class="table-row">
                     <td>{{$value->title}}</td>
-                    <td>{{$value->status}}</td>
+
+                    @if ($value->status)
+                    <td class="status text-success" data_todo_id="{{$value->id}}">Finished</td>
+                    @else
+                    <td class="status text-muted" data_todo_id="{{$value->id}}">Pending</td>
+                    @endif
+
                     <td>
-                        <a href="{{route('todos.edit', $value->id)}}"><i class="fas fa-edit text-warning"></i></a>
-                        <i class="btn fas fa-trash-alt text-danger" id="{{"delete-btn-".$key}}"></i>
+                        <a href=" {{route('todos.edit', $value->id)}}"><i class="fas fa-edit text-warning"></i></a>
+                        <i class="btn fas fa-trash-alt text-danger delete-btn" data_todo_id="{{$value->id}}"></i>
                     </td>
-                    <form hidden id="{{"form-delete-".$key}}" action="{{route('todos.delete', $value->id)}}"
-                        method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <input hidden aria-hidden="true" type="text" name="id" value="{{$value->id}}">
-                    </form>
                 </tr>
                 @endforeach
             </tbody>
@@ -58,26 +58,71 @@
 {{-- DOM MANIPULATION --}}
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-
-        const rows = document.querySelector('tbody').children;
        
-       for(let i = 0; i < rows.length; i++) {
+        todoAjax = (method, todoData) => {
+            // CHECK METHOD
+            if (method === "DELETE") {
+                $.ajax({
+                    type: "POST",
+                    url: `/todos/delete/${todoData.id}`,
+                    data: {"_method": method, "id": todoData.id},
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+            }
+            else if (method === "PUT") {
+                $.ajax({
+                    type: "POST",
+                    url: `/todos/edit/${todoData.id}`,
+                    data: {"_method": method, "id": todoData.id, status: todoData.status},
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+            }
+        }
+       
+         let isClicked = false;
+
+        // GRAB EACH TABLE ROWS
+        // UPDATE STATUS
+        $(".status").click(e => {
+            const todoId = e.target.attributes.data_todo_id.value;
+            const todoData = {id: todoId, status: null};
+
+            if (e.target.classList.contains("text-success")) {
+                e.target.classList.remove("text-success");
+                e.target.classList.add("text-muted");
+                e.target.textContent = "Pending";
+                todoData.status = false;
+                todoAjax("PUT", todoData);
+            }
+            else if (e.target.classList.contains("text-muted")) {
+                e.target.classList.remove("text-muted");
+                e.target.classList.add("text-success");
+                e.target.textContent = "Finished";
+                todoData.status = true;
+                todoAjax("PUT", todoData);
+            }
+
            
-           const deleteBtn = document.querySelector(`#delete-btn-${i}`);
-           const formDelete = document.querySelector(`#form-delete-${i}`);
+            isClicked = !isClicked;
+        });
+        
+        // GRAB EACH DELETE BTN
+        $(".delete-btn").click(e => {
+            e.target.parentNode.parentNode.remove();
 
-           deleteBtn.addEventListener("click", e => {
-               e.preventDefault();
-            
+            // DELETE REQUEST
+            const todoId = e.target.attributes.data_todo_id.value;
+            const todoData = {id: todoId};
+            todoAjax("DELETE", todoData);
+        });
 
-              
-              formDelete.submit();
-           });
-
-
-       }
     });
 </script>
+
 
 
 @endsection
